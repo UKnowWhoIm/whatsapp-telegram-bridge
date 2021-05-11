@@ -17,19 +17,19 @@ async function sendMessageTelegram(message, telegramChannel) {
         venom.MessageType.CONTACT_CARD,
         venom.MessageType.CONTACT_CARD_MULTI,
         venom.MessageType.VOICE 
-    ]
+    ];
     
     if(unsupportedTypes.includes(message.type)){
         return null;
     }
     
-    if (message.type == venom.MessageType.TEXT){
-        textContent = message.body
+    if (message.type === venom.MessageType.TEXT){
+        textContent = message.body;
     }
     else {
         // Text sent with media is stored inside captions, not body
         await sendAttachment(await getAttachmentStream(message), telegramChannel, message.id);
-        textContent = message.captions
+        textContent = message.captions;
     }
     
     if(textContent){
@@ -39,7 +39,7 @@ async function sendMessageTelegram(message, telegramChannel) {
 }
 
 async function sendAttachment(fileBuffer, channelName, name) {
-    await bot.sendDocument(channelName, fileBuffer, {}, {"filename": name, });
+    await bot.sendDocument(channelName, fileBuffer, {}, {'filename': name, });
 }
 
 async function getAttachmentStream(message) {
