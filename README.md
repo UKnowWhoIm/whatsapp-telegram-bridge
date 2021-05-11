@@ -4,15 +4,15 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 ## How to use
 
-1. Create a `settings.json` file from the `settings.example.json` and add your whatsapp chat's name to `pipes`.
+1. Create a `settings.json` file from the `settings.example.json`. In the `pipes` key store your all your required whatsapp chat's names.
 
-2. Create a [telegram bot](https://sendpulse.com/knowledge-base/chatbot/create-telegram-chatbot). Find the API key, and store it as your whatsapp chat's `token`. Store the name as your whatsapp chat's `name`.
+2. Create a [telegram bot](https://sendpulse.com/knowledge-base/chatbot/create-telegram-chatbot). Find the API key, and store it as value of key `token`.
 
 3. If you want to use it for a private channel, follow this [link](https://sarafian.github.io/low-code/2020/03/24/create-private-telegram-chatbot.html), and obatin `chat_id`
 
     If you don't mind creating a public channel, create it and obtain `chat_id`(@your channel name in url)
 
-4. Add chat_id to your corresponding whatsapp chat's `telegramChannel` property.
+4. Add `chat_id` to your corresponding whatsapp chat's key.
 
 5. Run 
     ```

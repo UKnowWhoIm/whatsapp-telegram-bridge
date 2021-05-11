@@ -1,9 +1,6 @@
 {
+    "token": "BOT API KEY",
     "pipes": {
-        "Whatsapp chat": {
-            "name": "Bot Name",
-            "token": "Bot API Key",
-            "telegramChannel": "your channel's chat_id"
-        }
+        "Whatsapp Chat":  "telegram channel id"
     }
 }
