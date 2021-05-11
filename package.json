@@ -26,6 +26,8 @@
   "homepage": "https://github.com/UKnowWhoIm/whatsapp-telegram-bridge#readme",
   "dependencies": {
     "jshint": "^2.12.0",
+    "node-telegram-bot-api": "^0.53.0",
+    "request": "^2.88.2",
     "sulla": "^2.4.0",
     "venom-bot": "^3.0.16"
   }

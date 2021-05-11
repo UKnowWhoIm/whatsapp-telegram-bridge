@@ -22,6 +22,8 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 6. It will display a QR code for whatsapp authentication, scan the QR code using whatsapp. You won't have to do this again.
 
-## Acknowledgement
+## Acknowledgements
 
-This project would not have been possible without the amazing Whatsapp API provided by [Venom](https://github.com/orkestral/venom).
+Whatsapp API - [Venom](https://github.com/orkestral/venom)
+
+Telegram Bot API - [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)

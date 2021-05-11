@@ -1,40 +1,48 @@
 const venom = require('venom-bot');
 const fs = require('fs');
-const { get } = require('https');
-
-venom
-  .create()
-  .then((client) => start(client))
-  .catch((erro) => {
-    console.log(erro);
-    });
-
+const TelegramBot = require('node-telegram-bot-api');
 
 const settings = JSON.parse(fs.readFileSync('settings.json'));
+const bot = new TelegramBot(settings.token, { polling: true});
+let whatsappClient;
 
-function sendMessageTelegram(message, bot){
-    const botUrl = `https://api.telegram.org/bot${bot.token}/sendMessage?chat_id=${bot.telegramChannel}&text=${message.body}`;
-    get(botUrl, function(res){
-        if(!(res.statusCode <= 299 && res.statusCode >= 200)){
-            console.log('Error sending message');
-        }
-    });
+async function sendMessageTelegram(message, telegramChannel) {
+
+    if (message.isMMS === true || message.isMedia === true) {
+        sendAttachment(await getAttachmentStream(message), telegramChannel);
+    }
+    else{
+        bot.sendMessage(telegramChannel, message.body);
+    }
+}
+
+async function sendAttachment(fileBuffer, channelName) {
+    bot.sendDocument(channelName, fileBuffer);
+}
+
+async function getAttachmentStream(message) {
+    return await whatsappClient.decryptFile(message);
 }
 
 
-function getTelegramPipe(message){
+function getTelegramChannel(message) {
     return settings.pipes[message.chat.name];
 }
 
 
-function start(client) {
-  let telegramPipe;
-  client.onMessage((message) => {
-    
-    telegramPipe = getTelegramPipe(message);
-    
-    if(telegramPipe){
-        sendMessageTelegram(message, telegramPipe);
-    }
-  });
+function start() {
+    whatsappClient.onMessage((message) => {
+        let telegramChannel = getTelegramChannel(message);
+
+        if (telegramChannel) {
+            sendMessageTelegram(message, telegramChannel);
+        }
+    });
 }
+
+async function main() {
+    whatsappClient = await venom.create();
+    start();
+}
+
+main();
