@@ -22,6 +22,12 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 6. It will display a QR code for whatsapp authentication, scan the QR code using whatsapp. You won't have to do this again.
 
+## Limitations
+
+- Since WhatsApp has no official API, the API used is based on WhatsApp Web. So you can't use WhatsApp Web while running this.
+
+- WhatsApp Web relies on your phone's internet too, so even if you deploy this on a server, your phone must have 24x7 internet access too.
+
 ## Acknowledgements
 
 Whatsapp API - [Venom](https://github.com/orkestral/venom)
