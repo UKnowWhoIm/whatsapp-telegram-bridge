@@ -7,6 +7,7 @@ const bot = new TelegramBot(settings.token, { polling: true});
 let whatsappClient;
 
 async function sendMessageTelegram(message, telegramChannel) {
+    // Send a message to telegramChannel
     let textContent;
     
     const unsupportedTypes = [
@@ -26,7 +27,8 @@ async function sendMessageTelegram(message, telegramChannel) {
         textContent = message.body
     }
     else {
-        await sendAttachment(await getAttachmentStream(message), telegramChannel);
+        // Text sent with media is stored inside captions, not body
+        await sendAttachment(await getAttachmentStream(message), telegramChannel, message.id);
         textContent = message.captions
     }
     
@@ -36,8 +38,8 @@ async function sendMessageTelegram(message, telegramChannel) {
     
 }
 
-async function sendAttachment(fileBuffer, channelName) {
-    await bot.sendDocument(channelName, fileBuffer);
+async function sendAttachment(fileBuffer, channelName, name) {
+    await bot.sendDocument(channelName, fileBuffer, {}, {"filename": name, });
 }
 
 async function getAttachmentStream(message) {
@@ -46,6 +48,7 @@ async function getAttachmentStream(message) {
 
 
 function getTelegramChannel(message) {
+    // Get the telegram channel pointing to whatsapp chat
     return settings.pipes[message.chat.name];
 }
 
