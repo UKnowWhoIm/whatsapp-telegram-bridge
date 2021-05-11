@@ -33,7 +33,7 @@ async function sendMessageTelegram(message, telegramChannel) {
     }
     
     if(textContent){
-        bot.sendMessage(telegramChannel, textContent, {}, fileOptions);
+        bot.sendMessage(telegramChannel, textContent);
     }
     
 }
