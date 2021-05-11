@@ -7,17 +7,37 @@ const bot = new TelegramBot(settings.token, { polling: true});
 let whatsappClient;
 
 async function sendMessageTelegram(message, telegramChannel) {
-
-    if (message.isMMS === true || message.isMedia === true) {
-        sendAttachment(await getAttachmentStream(message), telegramChannel);
+    let textContent;
+    
+    const unsupportedTypes = [
+        venom.MessageType.REVOKED, 
+        venom.MessageType.STICKER, 
+        venom.MessageType.UNKNOWN,
+        venom.MessageType.CONTACT_CARD,
+        venom.MessageType.CONTACT_CARD_MULTI,
+        venom.MessageType.VOICE 
+    ]
+    
+    if(unsupportedTypes.includes(message.type)){
+        return null;
     }
-    else{
-        bot.sendMessage(telegramChannel, message.body);
+    
+    if (message.type == venom.MessageType.TEXT){
+        textContent = message.body
     }
+    else {
+        await sendAttachment(await getAttachmentStream(message), telegramChannel);
+        textContent = message.captions
+    }
+    
+    if(textContent){
+        bot.sendMessage(telegramChannel, textContent, {}, fileOptions);
+    }
+    
 }
 
 async function sendAttachment(fileBuffer, channelName) {
-    bot.sendDocument(channelName, fileBuffer);
+    await bot.sendDocument(channelName, fileBuffer);
 }
 
 async function getAttachmentStream(message) {
