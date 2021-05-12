@@ -2,3 +2,4 @@ node_modules
 tokens
 settings.json
 attachments
+docker-compose.yml

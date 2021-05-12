@@ -1,8 +1,20 @@
 const venom = require('venom-bot');
+const process = require("process");
 const fs = require('fs');
 const TelegramBot = require('node-telegram-bot-api');
 
-const settings = JSON.parse(fs.readFileSync('settings.json'));
+let settings;
+
+try{
+    settings = JSON.parse(fs.readFileSync('settings.json'));
+}
+catch(e){
+    settings = {
+        "token": process.env.TOKEN,
+        "pipes": JSON.parse(process.env.PIPES)
+    }
+}
+
 const bot = new TelegramBot(settings.token, { polling: true});
 let whatsappClient;
 

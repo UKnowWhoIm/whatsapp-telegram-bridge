@@ -1,2 +1,4 @@
 node_modules
-tokens
+settings.json
+docker-compose.yml
+Dockerfile
