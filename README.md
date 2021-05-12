@@ -27,8 +27,11 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 ## Deploy
 
 1. Run the script and login locally.(This is important as we need that session data)
+
 2. Deploy the docker container with a cloud service([Heroku](https://heroku.com) is free).
+
 3. Set `TOKEN` environment variable with your `BOT_API_KEY`
+
 4. Set `PIPES` environment variable as a JSON String of your Whatsapp-Telegram Pipes.
 
 ## All Settings
