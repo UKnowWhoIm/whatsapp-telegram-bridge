@@ -24,7 +24,7 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 ## Deploy
 
-1. Switch to deploy branch
+1. Switch to [deploy](https://github.com/UKnowWhoIm/whatsapp-telegram-bridge/tree/deploy) branch
 2. Run the script and login locally.(This is important as we need that session data)
 3. Deploy the docker container with a cloud service([Heroku](https://heroku.com) is free).
 4. Set `TOKEN` environment variable with your `BOT_API_KEY`
