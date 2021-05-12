@@ -22,6 +22,14 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 6. It will display a QR code for whatsapp authentication, scan the QR code using whatsapp. You won't have to do this again.
 
+## Deploy
+
+1. Switch to deploy branch
+2. Run the script and login locally.(This is important as we need that session data)
+3. Deploy the docker container with a cloud service([Heroku](https://heroku.com) is free).
+4. Set `TOKEN` environment variable with your `BOT_API_KEY`
+5. Set `PIPES` environment variable as a JSON String of your Whatsapp-Telegram Pipes.
+
 ## Limitations
 
 - Since WhatsApp has no official API, the API used is based on WhatsApp Web. So you can't use WhatsApp Web while running this.
