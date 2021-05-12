@@ -1,14 +1,22 @@
 const venom = require('venom-bot');
 const TelegramBot = require('node-telegram-bot-api');
 const settings = require("./loadSettings")();
+const utils = require("./utils");
 
 const bot = new TelegramBot(settings.TOKEN, { polling: true});
 let whatsappClient;
 
 async function handleDisconnect(){
     const disconnectMsg = '🛑🛑🛑\n\nWHATSAPP BOT HAS GONE OFFLINE\n\n🛑🛑';
-    if (await whatsappClient.getConnectionState() !== venom.SocketState.CONNECTED){
+    const connectionStates = [
+        venom.SocketState.CONNECTED,
+        venom.SocketState.PAIRING,
+        venom.SocketState.RESUMING
+    ]
+    let currentState = await whatsappClient.getConnectionState();
+    if (!connectionStates.includes(currentState)){
         // Notify each channel that bot has gone offline
+        console.log(currentState);
         for(var whatsappChat of Object.keys(settings.PIPES))
             sendMessageTelegram(disconnectMsg, settings.PIPES[whatsappChat]);
     }
@@ -36,35 +44,45 @@ async function sendRestart(){
 
 function setHeaderOfMessage(message, whatsappChat, sender){
     // Attach sender info
-    let header = '';
-    const defaultHeader = `Sent From Whatsapp Chat: ${whatsappChat}\n\nSent By: ${sender}`;
-    if(settings.ADD_DEFAULT_HEADER ?? true){
-        header = defaultHeader;
+    if(message){
+        let header = '';
+        const defaultHeader = `Sent From Whatsapp Chat: ${whatsappChat}\n\nSent By: ${sender}`;
+        if(settings.ADD_DEFAULT_HEADER ?? true){
+            header = defaultHeader;
+        }
+        header += (header === '' ? '' : '\n\n') + (settings.CUSTOM_HEADER ?? '');
+        return header + '\n\n' + message;
     }
-    header += (header === '' ? '' : '\n\n') + settings.CUSTOM_HEADER ?? '';
-    return header + '\n\n' + message;
 }
 
 async function sendMessageTelegram(message, telegramChannel) {
     // Send a message to telegramChannel
-    let textContent;
+    let textContent = null;
     
     if(typeof(message) !== "string"){
         const unsupportedTypes = [
             venom.MessageType.REVOKED, 
             venom.MessageType.STICKER, 
             venom.MessageType.UNKNOWN,
-            venom.MessageType.CONTACT_CARD,
             venom.MessageType.CONTACT_CARD_MULTI,
             venom.MessageType.VOICE 
         ];
-        
+
         if(unsupportedTypes.includes(message.type)){
             return null;
         }
         
         if (message.type === venom.MessageType.TEXT){
             textContent = message.body;
+        }
+        else if(message.type === venom.MessageType.CONTACT_CARD){
+            let contactData = utils.parseContacts(message.body);
+            if(contactData === null){
+                textContent = "ERROR: Failed Parsing Contacts";
+            }
+            else{
+                sendContact(contactData, telegramChannel);
+            }
         }
         else {
             // Text sent with media is stored inside captions, not body
@@ -76,6 +94,7 @@ async function sendMessageTelegram(message, telegramChannel) {
     else{   
         textContent = message;
     }
+
     if(textContent){
         bot.sendMessage(telegramChannel, textContent);
     }
@@ -84,6 +103,15 @@ async function sendMessageTelegram(message, telegramChannel) {
 
 async function sendAttachment(fileBuffer, channelName, name) {
     await bot.sendDocument(channelName, fileBuffer, {}, {'filename': name, });
+}
+
+async function sendContact(contactData, telegramChannel){
+    await bot.sendContact(
+        telegramChannel,
+        contactData.phoneNo,
+        contactData.firstName,
+        {lastName: contactData.lastName ?? ''}
+    );
 }
 
 async function getAttachmentStream(message) {
