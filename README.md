@@ -55,7 +55,7 @@ Currently headers don't work for attachments.
 
 Default is true
 
-### `CUSTOM_HEADER`
+#### `CUSTOM_HEADER`
 
 Add your own header to all messages sent except attachments.
 
