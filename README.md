@@ -35,15 +35,15 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 Settings can be stored in a json file or as environment variables.
 
-### `TOKEN` 
+#### `TOKEN` 
 
 The `BOT_API_TOKEN` obtained while creating your telegram bot. 
 
-### `PIPES`
+#### `PIPES`
 
 The mappings between whatsapp chats and telegram channel. Must be stored as JSON. Can have multiple pipes.
 
-### `SHOW_DEFAULT_HEADER`
+#### `SHOW_DEFAULT_HEADER`
 
 Show or hide default header.
 ```
