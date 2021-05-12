@@ -1,10 +1,10 @@
-// Created this file as many services such as heroku need a web process
+// Need a web process to stay alive
 const express = require('express');
 const process = require('process');
-require('./index');
 const app = express();
-const port = Number.parseInt(process.env.PORT ?? 3000);
 
-app.get('/', (req, res) => res.send('Hello World!'));
+app.get('/', (_, res) => res.send('Hello World!'));
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+app.listen(process.env.PORT, '0.0.0.0', () => console.log(`listening at http://localhost:${process.env.PORT}`));
+
+require('./index');

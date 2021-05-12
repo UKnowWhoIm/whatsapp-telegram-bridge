@@ -18,32 +18,65 @@ catch(e){
 const bot = new TelegramBot(settings.token, { polling: true});
 let whatsappClient;
 
+async function handleDisconnect(){
+    const disconnectMsg = "🛑🛑🛑\n\nWHATSAPP BOT HAS GONE OFFLINE\n\n🛑🛑🛑"
+    if (await whatsappClient.getConnectionState() !== venom.SocketState.CONNECTED){
+        // Notify each channel that bot has gone offline
+        for(var whatsappChat of Object.keys(settings.pipes))
+            sendMessageTelegram(disconnectMsg, settings.pipes[whatsappChat]);
+    }
+}
+
+async function sendHello(){
+    // Send a connected message to telegram channels
+    for(var whatsappChat of Object.keys(settings.pipes)){
+        sendMessageTelegram(
+            `Channel successfully linked with Whatsapp Chat ${whatsappChat}`,
+            settings.pipes[whatsappChat]
+        );
+    }
+}
+
+async function sendRestart(){
+    // Send a restart message after disconnect to telegram channels
+    for(var whatsappChat of Object.keys(settings.pipes)){
+        sendMessageTelegram(
+            `Connection re-established with Whatsapp Chat ${whatsappChat}`,
+            settings.pipes[whatsappChat]
+        );
+    }
+}
+
 async function sendMessageTelegram(message, telegramChannel) {
     // Send a message to telegramChannel
     let textContent;
     
-    const unsupportedTypes = [
-        venom.MessageType.REVOKED, 
-        venom.MessageType.STICKER, 
-        venom.MessageType.UNKNOWN,
-        venom.MessageType.CONTACT_CARD,
-        venom.MessageType.CONTACT_CARD_MULTI,
-        venom.MessageType.VOICE 
-    ];
-    
-    if(unsupportedTypes.includes(message.type)){
-        return null;
+    if(typeof(message) !== "string"){
+        const unsupportedTypes = [
+            venom.MessageType.REVOKED, 
+            venom.MessageType.STICKER, 
+            venom.MessageType.UNKNOWN,
+            venom.MessageType.CONTACT_CARD,
+            venom.MessageType.CONTACT_CARD_MULTI,
+            venom.MessageType.VOICE 
+        ];
+        
+        if(unsupportedTypes.includes(message.type)){
+            return null;
+        }
+        
+        if (message.type === venom.MessageType.TEXT){
+            textContent = message.body;
+        }
+        else {
+            // Text sent with media is stored inside captions, not body
+            await sendAttachment(await getAttachmentStream(message), telegramChannel, message.id);
+            textContent = message.captions;
+        }
     }
-    
-    if (message.type === venom.MessageType.TEXT){
-        textContent = message.body;
+    else{   
+        textContent = message;
     }
-    else {
-        // Text sent with media is stored inside captions, not body
-        await sendAttachment(await getAttachmentStream(message), telegramChannel, message.id);
-        textContent = message.captions;
-    }
-    
     if(textContent){
         bot.sendMessage(telegramChannel, textContent);
     }
@@ -66,6 +99,7 @@ function getTelegramChannel(message) {
 
 
 function start() {
+    sendHello();
     whatsappClient.onMessage((message) => {
         let telegramChannel = getTelegramChannel(message);
 
@@ -73,12 +107,19 @@ function start() {
             sendMessageTelegram(message, telegramChannel);
         }
     });
+    whatsappClient.onStateChange((state) => {
+        if (venom.SocketState.CONFLICT === state){
+            // Force client to use whatsapp web here
+            whatsappClient.useHere.then((_) => sendRestart);
+        };
+    });
 }
 
 async function main() {
     try{
         whatsappClient = await venom.create();
         start();
+        setInterval(handleDisconnect, 1000 * 2);
     }
     catch(e){
         console.log(e);
