@@ -1,5 +1,5 @@
 const venom = require('venom-bot');
-const process = require("process");
+const process = require('process');
 const fs = require('fs');
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -10,9 +10,9 @@ try{
 }
 catch(e){
     settings = {
-        "token": process.env.TOKEN,
-        "pipes": JSON.parse(process.env.PIPES)
-    }
+        'token': process.env.TOKEN,
+        'pipes': JSON.parse(process.env.PIPES)
+    };
 }
 
 const bot = new TelegramBot(settings.token, { polling: true});
