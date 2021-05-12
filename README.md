@@ -4,6 +4,8 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 ## How to use
 
+**It is recommended that you use Node and NPM locally and use Docker if you wanna deploy, as the container is very large.**
+
 1. Create a `settings.json` file from the `settings.example.json`. In the `pipes` key store your all your required whatsapp chat's names.
 
 2. Create a [telegram bot](https://sendpulse.com/knowledge-base/chatbot/create-telegram-chatbot). Find the API key, and store it as value of key `token`.
@@ -24,11 +26,10 @@ This project creates a bridge between a whatsapp chat and a public telegram chan
 
 ## Deploy
 
-1. Switch to [deploy](https://github.com/UKnowWhoIm/whatsapp-telegram-bridge/tree/deploy) branch
-2. Run the script and login locally.(This is important as we need that session data)
-3. Deploy the docker container with a cloud service([Heroku](https://heroku.com) is free).
-4. Set `TOKEN` environment variable with your `BOT_API_KEY`
-5. Set `PIPES` environment variable as a JSON String of your Whatsapp-Telegram Pipes.
+1. Run the script and login locally.(This is important as we need that session data)
+2. Deploy the docker container with a cloud service([Heroku](https://heroku.com) is free).
+3. Set `TOKEN` environment variable with your `BOT_API_KEY`
+4. Set `PIPES` environment variable as a JSON String of your Whatsapp-Telegram Pipes.
 
 ## Limitations
 

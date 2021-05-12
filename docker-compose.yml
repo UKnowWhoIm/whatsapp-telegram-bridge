@@ -1,8 +1,0 @@
-version: "3"
-
-services: 
-    app:
-        build: .
-        environment: 
-            TOKEN: "1861392469:AAEkoisILlCTsGxc4UBq83SwzjUBUbW2y5c"
-            PIPES: "{\"CSE RIT 2K19_23 Official💻\":  \"-1001494706802\", \"Test the bridge\": \"@testbot972\"}"

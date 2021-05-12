@@ -1,3 +1,4 @@
+// Created this file as many services such as heroku need a web process
 const express = require("express");
 const process = require("process");
 require("./index");

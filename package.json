@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npm run lint",
     "lint": "jshint --exclude='node_modules/' *.js",
-    "start": "node server.js"
+    "start": "node index.js",
+    "deploy": "node server.js"
   },
   "repository": {
     "type": "git",
