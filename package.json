@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A bridge between whatsapp and telgram to ease the transition of moving to telegram",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "npm run lint",
     "lint": "jshint --exclude='node_modules/' *.js",

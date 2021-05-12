@@ -1,17 +1,17 @@
-const venom = require('venom-bot');
-const TelegramBot = require('node-telegram-bot-api');
-const settings = require("./loadSettings")();
-const utils = require("./utils");
+import { SocketState, MessageType, create } from 'venom-bot';
+import TelegramBot from 'node-telegram-bot-api';
+import { parseContacts, loadSettings } from "./utils.js";
 
+const settings = loadSettings();
 const bot = new TelegramBot(settings.TOKEN, { polling: true});
 let whatsappClient;
 
 async function handleDisconnect(){
     const disconnectMsg = '🛑🛑🛑\n\nWHATSAPP BOT HAS GONE OFFLINE\n\n🛑🛑';
     const connectionStates = [
-        venom.SocketState.CONNECTED,
-        venom.SocketState.PAIRING,
-        venom.SocketState.RESUMING
+        SocketState.CONNECTED,
+        SocketState.PAIRING,
+        SocketState.RESUMING
     ]
     let currentState = await whatsappClient.getConnectionState();
     if (!connectionStates.includes(currentState)){
@@ -61,22 +61,22 @@ async function sendMessageTelegram(message, telegramChannel) {
     
     if(typeof(message) !== "string"){
         const unsupportedTypes = [
-            venom.MessageType.REVOKED, 
-            venom.MessageType.STICKER, 
-            venom.MessageType.UNKNOWN,
-            venom.MessageType.CONTACT_CARD_MULTI,
-            venom.MessageType.VOICE 
+            MessageType.REVOKED, 
+            MessageType.STICKER, 
+            MessageType.UNKNOWN,
+            MessageType.CONTACT_CARD_MULTI,
+            MessageType.VOICE 
         ];
 
         if(unsupportedTypes.includes(message.type)){
             return null;
         }
         
-        if (message.type === venom.MessageType.TEXT){
+        if (message.type === MessageType.TEXT){
             textContent = message.body;
         }
-        else if(message.type === venom.MessageType.CONTACT_CARD){
-            let contactData = utils.parseContacts(message.body);
+        else if(message.type === MessageType.CONTACT_CARD){
+            let contactData = parseContacts(message.body);
             if(contactData === null){
                 textContent = "ERROR: Failed Parsing Contacts";
             }
@@ -135,7 +135,7 @@ function start() {
         }
     });
     whatsappClient.onStateChange((state) => {
-        if (venom.SocketState.CONFLICT === state){
+        if (SocketState.CONFLICT === state){
             // Force client to use whatsapp web here
             whatsappClient.useHere.then((_) => sendRestart);
         }
@@ -144,7 +144,7 @@ function start() {
 
 async function main() {
     try{
-        whatsappClient = await venom.create();
+        whatsappClient = await create();
         start();
         setInterval(handleDisconnect, 1000 * 2);
     }
