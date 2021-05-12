@@ -1,50 +1,48 @@
 const venom = require('venom-bot');
-const process = require('process');
-const fs = require('fs');
 const TelegramBot = require('node-telegram-bot-api');
+const settings = require("./loadSettings")();
 
-let settings;
-
-try{
-    settings = JSON.parse(fs.readFileSync('settings.json'));
-}
-catch(e){
-    settings = {
-        'token': process.env.TOKEN,
-        'pipes': JSON.parse(process.env.PIPES)
-    };
-}
-
-const bot = new TelegramBot(settings.token, { polling: true});
+const bot = new TelegramBot(settings.TOKEN, { polling: true});
 let whatsappClient;
 
 async function handleDisconnect(){
-    const disconnectMsg = "🛑🛑🛑\n\nWHATSAPP BOT HAS GONE OFFLINE\n\n🛑🛑🛑"
+    const disconnectMsg = '🛑🛑🛑\n\nWHATSAPP BOT HAS GONE OFFLINE\n\n🛑🛑';
     if (await whatsappClient.getConnectionState() !== venom.SocketState.CONNECTED){
         // Notify each channel that bot has gone offline
-        for(var whatsappChat of Object.keys(settings.pipes))
-            sendMessageTelegram(disconnectMsg, settings.pipes[whatsappChat]);
+        for(var whatsappChat of Object.keys(settings.PIPES))
+            sendMessageTelegram(disconnectMsg, settings.PIPES[whatsappChat]);
     }
 }
 
 async function sendHello(){
     // Send a connected message to telegram channels
-    for(var whatsappChat of Object.keys(settings.pipes)){
+    for(var whatsappChat of Object.keys(settings.PIPES)){
         sendMessageTelegram(
             `Channel successfully linked with Whatsapp Chat ${whatsappChat}`,
-            settings.pipes[whatsappChat]
+            settings.PIPES[whatsappChat]
         );
     }
 }
 
 async function sendRestart(){
     // Send a restart message after disconnect to telegram channels
-    for(var whatsappChat of Object.keys(settings.pipes)){
+    for(var whatsappChat of Object.keys(settings.PIPES)){
         sendMessageTelegram(
             `Connection re-established with Whatsapp Chat ${whatsappChat}`,
-            settings.pipes[whatsappChat]
+            settings.PIPES[whatsappChat]
         );
     }
+}
+
+function setHeaderOfMessage(message, whatsappChat, sender){
+    // Attach sender info
+    let header = '';
+    const defaultHeader = `Sent From Whatsapp Chat: ${whatsappChat}\n\nSent By: ${sender}`;
+    if(settings.ADD_DEFAULT_HEADER ?? true){
+        header = defaultHeader;
+    }
+    header += (header === '' ? '' : '\n\n') + settings.CUSTOM_HEADER ?? '';
+    return header + '\n\n' + message;
 }
 
 async function sendMessageTelegram(message, telegramChannel) {
@@ -73,6 +71,7 @@ async function sendMessageTelegram(message, telegramChannel) {
             await sendAttachment(await getAttachmentStream(message), telegramChannel, message.id);
             textContent = message.captions;
         }
+        textContent = setHeaderOfMessage(textContent, message.chat.name, message.sender.pushname);
     }
     else{   
         textContent = message;
@@ -94,7 +93,7 @@ async function getAttachmentStream(message) {
 
 function getTelegramChannel(message) {
     // Get the telegram channel pointing to whatsapp chat
-    return settings.pipes[message.chat.name];
+    return settings.PIPES[message.chat.name];
 }
 
 
@@ -111,7 +110,7 @@ function start() {
         if (venom.SocketState.CONFLICT === state){
             // Force client to use whatsapp web here
             whatsappClient.useHere.then((_) => sendRestart);
-        };
+        }
     });
 }
 
