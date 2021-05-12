@@ -64,8 +64,14 @@ function start() {
 }
 
 async function main() {
-    whatsappClient = await venom.create();
-    start();
+    try{
+        whatsappClient = await venom.create();
+        start();
+    }
+    catch(e){
+        console.log(e);
+    }
+    
 }
 
 main();
