@@ -1,6 +1,6 @@
 # Whatsapp Telegram Bridge
 
-This project creates a bridge between a whatsapp chat and a public telegram channel, ie you could recieve the messages sent on whatsapp through telegram.
+This project creates a bridge between a whatsapp chat and a telegram channel, ie you could recieve the messages sent on whatsapp through telegram.
 
 ## How to use
 
