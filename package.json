@@ -30,6 +30,6 @@
     "express": "^4.17.1",
     "jshint": "^2.13.1",
     "node-telegram-bot-api": "^0.54.0",
-    "venom-bot": "^3.1.2"
+    "venom-bot": "^4.3.6"
   }
 }
